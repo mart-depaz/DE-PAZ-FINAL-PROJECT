@@ -1,0 +1,216 @@
+<!--
+for dashboard app
+templates/dashboard/about.html
+-->
+
+{% extends 'partial/base.html' %}
+{% load static %}
+
+{% block title %}About Us{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Base Styles */
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+    a {
+        color: #067d68;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+
+    /* Container Adjustment for Sidebar */
+    .content {
+        padding: 0;
+        margin-left: 0;
+    }
+
+    .about-container {
+        max-width: 960px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+        margin-top: 2.5cm;
+    }
+
+    /* Hero Section */
+    .hero {
+        background: linear-gradient(55deg, #067d68, #50d5b7);
+        color: white;
+        padding: 4rem 2rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 12px 24px rgba(6, 125, 104, 0.45);
+        margin-bottom: 3rem;
+    }
+    .hero h1 {
+        font-size: 3rem;
+        margin: 0 0 1rem;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        color: white;
+    }
+    .hero p {
+        font-size: 1.25rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Section Titles */
+    h2.section-title {
+        font-size: 2rem;
+        color: #444;
+        border-bottom: 3px solid #067d68;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        font-weight: 800;
+    }
+
+    /* Message, Mission, and Values */
+    .message,
+    .mission,
+    .values {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    .message p,
+    .mission p {
+        font-size: 1.1rem;
+        color: #555;
+    }
+    .values-list {
+        list-style-type: none;
+        padding-left: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.25rem;
+    }
+    .values-list li {
+        background: #f7f9ff;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 4px 12px rgba(6, 125, 104, 0.15);
+        font-weight: 600;
+        color: #555;
+        text-align: center;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        cursor: default;
+    }
+    .values-list li:hover {
+        background-color: #067d68;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Team Section */
+    .team {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    .team-members {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 2rem;
+    }
+    .member {
+        text-align: center;
+        padding: 1rem;
+        border-radius: 10px;
+        background: #f7f9ff;
+        box-shadow: 0 6px 14px rgba(6, 125, 104, 0.15);
+        transition: transform 0.3s ease;
+    }
+    .member:hover {
+        transform: translateY(-8px);
+    }
+    .member h3 {
+        margin: 0.5rem 0 0.25rem;
+        font-size: 1.25rem;
+        color: #444;
+    }
+    .member p {
+        margin: 0;
+        font-size: 1rem;
+        color: #666;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+        .hero h1 {
+            font-size: 2.2rem;
+        }
+        .hero p {
+            font-size: 1rem;
+        }
+        h2.section-title {
+            font-size: 1.5rem;
+        }
+        .about-container {
+            margin: 1rem auto;
+            padding: 0 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="about-container">
+    <section class="hero" aria-label="About our barangay">
+        <h1>About Us</h1>
+        <p>
+            We are the Barangay Event Organizer team, committed to uniting our community through meaningful events and initiatives.
+        </p>
+    </section>
+
+    <section class="message" aria-labelledby="message-title">
+        <h2 id="message-title" class="section-title">A Message from the Barangay</h2>
+        <p>
+            Welcome to our Barangay Event Organizer platform! 
+            We strive to foster a sense of unity and engagement among 
+            residents by organizing events that celebrate our culture, promote 
+            collaboration, and address community needs. Together, let’s build a 
+            stronger, more connected barangay.
+        </p>
+    </section>
+
+    <section class="mission" aria-labelledby="mission-title">
+        <h2 id="mission-title" class="section-title">Our Mission</h2>
+        <p>
+            To strengthen community bonds by organizing inclusive events that cater to the diverse needs of our barangay residents, promote participation, and enhance the quality of life for all.
+        </p>
+    </section>
+
+    <section class="values" aria-labelledby="values-title">
+        <h2 id="values-title" class="section-title">Our Core Values</h2>
+        <ul class="values-list">
+            <li>Community</li>
+            <li>Inclusivity</li>
+            <li>Transparency</li>
+            <li>Service</li>
+            <li>Unity</li>
+            <li>Responsibility</li>
+        </ul>
+    </section>
+
+    <section class="team" aria-labelledby="team-title">
+        <h2 id="team-title" class="section-title">Meet the Barangay Officials</h2>
+        <div class="team-members">
+            {% for official in officials %}
+                <div class="member">
+                    <h3>{{ official.full_name }}</h3>
+                    <p>{{ official.position|default:"Barangay Official" }}</p>
+                </div>
+            {% empty %}
+                <p>No barangay officials found.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

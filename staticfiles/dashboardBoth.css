@@ -1,0 +1,443 @@
+/* Add Flexbox container for side-by-side alignment */
+.dashboard-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: nowrap;
+    align-items: flex-start; /* Ensure tables align at the top, not stretch */
+    min-height: 0; /* Prevent flex container from forcing height */
+}
+
+/* events */
+.events-table {
+    margin: 20px 10px;
+    width: 700px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Ensure internal elements stack vertically */
+}
+
+.table-body-wrapper {
+    max-height: 400px; /* Increased from 200px to make the table taller */
+    overflow-y: auto;
+    background-color: rgb(255, 255, 255); /* Match events app body color */
+    border-bottom-left-radius: 20px; /* Ensure the scrollable area has rounded corners */
+    border-bottom-right-radius: 20px;
+    padding-bottom: 0; /* Remove any padding that might cause a gap */
+    margin-bottom: 0; /* Ensure no gap between the scrollable area and the more-indicator */
+    flex-grow: 1;
+}
+
+.events-table table {
+    background-color: rgb(255, 255, 255); /* Match events app body color */
+}
+
+.events-table-official {
+    width: 700px;
+}
+
+.events-table-member {
+    width: 700px;
+}
+
+.table-header-population {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 25px;
+    background: linear-gradient(55deg, #580892, #6b46a7);
+    color: white;
+    border-radius: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.table-header-events {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 25px;
+    background: linear-gradient(55deg, #067d68, #50d5b7);    
+    color: white;
+    border-radius: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.table-header-events h2 {
+    color: #f5f5ff;
+    margin: 0;
+    font-size: 22px;
+    text-align: center;
+    flex-grow: 1;
+    animation: slideCycle 5s ease-in-out infinite;
+}
+
+.table-header-population h2 {
+    color: #f5f5ff;
+    margin: 0;
+    font-size: 22px;
+    text-align: center;
+    flex-grow: 1;
+    animation: slideCycle 5s ease-in-out infinite;
+}
+
+.toggle-btn {
+    position: absolute;
+    right: 25px;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+    background-color: #ffffff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-btn i {
+    font-size: 16px;
+    color: #333;
+}
+
+.toggle-btn:hover {
+    background-color: #000000;
+}
+
+.toggle-btn:hover i {
+    color: #f5f5ff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+th, td {
+    padding: 15px;
+    border-bottom: 1px solid #5d585865;
+    word-wrap: break-word;
+    white-space: normal;
+    text-align: center;
+}
+
+th {
+    background-color: rgb(255, 255, 255); /* Match events app body color */
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+td {
+    font-size: 16px;
+    color: #333;
+    vertical-align: middle;
+}
+
+th:nth-child(1), td:nth-child(1) {
+    width: 25%;
+}
+
+th:nth-child(2), td:nth-child(2) {
+    width: 20%;
+}
+
+th:nth-child(3), td:nth-child(3) {
+    width: 15%;
+}
+
+th:nth-child(4), td:nth-child(4) {
+    width: 20%;
+}
+
+.empty-message {
+    text-align: center;
+    padding: 15px;
+    color: #666;
+    font-size: 16px;
+    font-style: italic;
+}
+
+#more-indicator-event {
+    background-color: rgb(255, 255, 255);
+}
+
+.more-indicator {
+    text-align: center;
+    padding: 5px;
+    background-color: #f5f5ff;
+    color: #555;
+    font-weight: bold;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    position: relative;
+}
+
+.more-indicator span {
+    display: inline-block;
+    font-size: 24px;
+}
+
+.more-indicator span:nth-child(1) {
+    animation: jump 2s infinite;
+}
+
+.more-indicator span:nth-child(2) {
+    animation: jump 2s infinite 0.3s;
+}
+
+.more-indicator span:nth-child(3) {
+    animation: jump 2s infinite 0.6s;
+}
+
+/* Style for the "See More Events" text with an imaginary box */
+.see-more-events {
+    position: absolute;
+    right: 68px; /* Position to the left of the toggle-btn */
+    top: 15%;
+    transform: translateY(-50%);
+    background: linear-gradient(90deg, #ff00d4, #00ddff); /* Match header color */
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 10px; /* Rounded corners for the box */
+    animation: pulse 2s infinite; /* Apply the pulsing animation */
+}
+
+/* Add an arrow-like extension pointing to the right */
+.see-more-events::after {
+    margin-top: 10%;
+    margin-right: 5%;
+    content: '';
+    position: absolute;
+    right: 3px; /* Position the arrow to the right of the box */
+    top: 50%;
+    transform: translateY(-50%) rotate(-65deg);
+    width: 0;
+    height: 0;
+    border-left: 10px solid #0ac2de; /* Match the header color */
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+
+/* Animation for the "See More Events" box: pulsing effect */
+@keyframes pulse {
+    0% {
+        transform: translateY(-50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-50%) scale(1.05);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(-50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Animation for the dots: jump effect */
+@keyframes jump {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Animation for the header text: left → center → right → left (repeating) */
+@keyframes slideCycle {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    12.5% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    75% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    87.5% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+/* population */
+body {
+    width: 100%;
+}
+
+
+.population-table tbody tr:nth-child(1) i { color: #4a90e2; }
+.population-table tbody tr:nth-child(2) i { color: #e96ba3; }
+.population-table tbody tr:nth-child(3) i { color: #967adc; }
+.population-table tbody tr:nth-child(4) i { color: #fbb257; }
+.population-table tbody tr:nth-child(5) i { color: #5cc27b; }
+.population-table tbody tr:nth-child(6) i { color: #cf8f87; }
+
+.population-table {
+    margin: 20px 10px;
+    width: 500px; /* Set a fixed width to prevent wrapping */
+    background-color: #f5f5ff;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.population-table .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background-color: #6230bf;
+    color: white;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.population-table .table-header h2 {
+    margin: 0;
+    font-size: 25px;
+    text-align: center;
+    flex-grow: 1;
+    color: #f5f5ff;
+    animation: slideCycle 5s ease-in-out infinite;
+}
+
+.population-table .toggle-btn {
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+    background-color: #fcfcfc;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.population-table .toggle-btn i {
+    font-size: 16px;
+    color: #333;
+}
+
+.population-table .toggle-btn:hover {
+    background-color: #000000;
+}
+
+.population-table .toggle-btn:hover i {
+    color: #f5f5ff;
+}
+
+.population-table table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.population-table th, .population-table td {
+    padding: 15px;
+    border-bottom: none;
+    text-align: center;
+}
+
+.population-table th {
+    background-color: #f5f5ff;
+    font-weight: bold;
+    font-size: 25px;
+    color: #333;
+}
+
+.population-table td {
+    font-size: 20px;
+    color: #333;
+    vertical-align: middle;
+    padding: 7%;
+}
+
+.population-table th:nth-child(1), .population-table td:nth-child(1) {
+    width: 60%;
+}
+
+.population-table th:nth-child(2), .population-table td:nth-child(2) {
+    width: 40%;
+}
+
+.population-table td i {
+    font-size: 30px;
+    margin-right: 10px;
+    color: #555;
+}
+
+.population-table .more-indicator {
+    text-align: center;
+    padding: 5px;
+    background-color: #f5f5ff;
+    color: #555;
+    font-weight: bold;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.more-indicator span {
+    display: inline-block;
+    font-size: 30px;
+}
+
+.more-indicator span:nth-child(1) {
+    animation: jump 2s infinite;
+}
+
+.more-indicator span:nth-child(2) {
+    animation: jump 2s infinite 0.3s;
+}
+
+.more-indicator span:nth-child(3) {
+    animation: jump 2s infinite 0.5s;
+}
+
+.population-row {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.population-row.hidden {
+    opacity: 0;
+    display: none;
+}
+
+.population-row.fade-in {
+    opacity: 1;
+}
+
+.population-row.fade-out {
+    opacity: 0;
+}   

@@ -1,0 +1,315 @@
+<!--
+for dashboard app
+templates/partial/_population_full.html
+-->
+
+
+
+
+
+{% load static %}
+
+<div class="population-modal-wrapper" style="position: relative; display: inline-block;">
+    <div class="table-container population-table-full" aria-label="Total Population Table">
+        <div class="table-header-full">
+            <h2>Total Population</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-category="male" tabindex="0">
+                    <td><i class="fas fa-male"></i><span class="category-text">Male</span></td>
+                    <td>{{ total_males }}</td>
+                </tr>
+                <tr data-category="female" tabindex="0">
+                    <td><i class="fas fa-female"></i><span class="category-text">Female</span></td>
+                    <td>{{ total_females }}</td>
+                </tr>
+                <tr data-category="senior-citizen" tabindex="0">
+                    <td><i class="fas fa-user-shield"></i><span class="category-text">Senior Citizen</span></td>
+                    <td>{{ total_senior_citizens }}</td>
+                </tr>
+                <tr data-category="children" tabindex="0">
+                    <td><i class="fas fa-child"></i><span class="category-text">Children</span></td>
+                    <td>{{ total_children }}</td>
+                </tr>
+                <tr data-category="youth" tabindex="0">
+                    <td><i class="fas fa-users"></i><span class="category-text">Youth</span></td>
+                    <td>{{ total_youth }}</td>
+                </tr>
+                <tr data-category="pwd" tabindex="0">
+                    <td><i class="fas fa-wheelchair"></i><span class="category-text">PWD</span></td>
+                    <td>{{ total_pwd }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal Overlay inside wrapper -->
+    <div class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc">
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close detail view">&times;</button>
+            <div class="detail-icon"><i></i></div>
+            <h3 id="modal-title" class="detail-category"></h3>
+            <p id="modal-desc" class="detail-value"></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .population-modal-wrapper {
+        /* This wrapper confines the modal and overlay */
+        position: relative;
+        display: inline-block;
+    }
+
+    .population-table-full {
+        width: calc(100% - 20px);
+        max-width: 800px;
+        background-color: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(101, 65, 255, 0.2),
+                    0 3px 6px rgba(101, 65, 255, 0.1);
+        margin-left: 7cm;
+        margin-top: 0;
+        overflow: hidden;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        position: relative;
+        z-index: 1;
+    }
+
+    .population-table-full .table-header-full {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 25px 30px;
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: #fefefe;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+    .population-table-full .table-header-full h2 {
+        margin: 0;
+        color: #f8f9ff;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .population-table-full table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+        table-layout: fixed;
+    }
+
+    .population-table-full thead tr th {
+        font-size: 18px;
+        color: #54478c;
+        font-weight: 700;
+        padding-bottom: 10px;
+        text-align: center;
+        background: transparent;
+        border: none;
+        text-transform: uppercase;
+        letter-spacing: 1.4px;
+    }
+
+    .population-table-full tbody tr {
+        background: #f8f9ff;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(145, 112, 255, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        cursor: pointer;
+    }
+
+    .population-table-full tbody tr:hover,
+    .population-table-full tbody tr:focus {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 20px rgba(101, 65, 255, 0.3);
+        background: #ececff;
+        outline: none;
+    }
+
+    .population-table-full tbody tr td {
+        font-size: 20px;
+        color: #3c3c3c;
+        padding: 22px 30px;
+        vertical-align: middle;
+        font-weight: 600;
+    }
+
+    /* Center icon and category text horizontally and vertically */
+    .population-table-full tbody tr td:first-child {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        text-align: center;
+    }
+
+    .population-table-full tbody tr td i {
+        font-size: 28px;
+        min-width: 32px;
+        transition: color 0.3s ease;
+    }
+
+    .population-table-full tbody tr:nth-child(1) i { color: #4a90e2; }
+    .population-table-full tbody tr:nth-child(2) i { color: #e96ba3; }
+    .population-table-full tbody tr:nth-child(3) i { color: #967adc; }
+    .population-table-full tbody tr:nth-child(4) i { color: #fbb257; }
+    .population-table-full tbody tr:nth-child(5) i { color: #5cc27b; }
+    .population-table-full tbody tr:nth-child(6) i { color: #cf8f87; }
+
+    /* Center value cell text horizontally and vertically */
+    .population-table-full tbody tr td:nth-child(2) {
+        text-align: center;
+        vertical-align: middle;
+        color: #5552a3;
+        font-weight: 700;
+    }
+
+    /* Modal Overlay in wrapper */
+    .modal-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        border-radius: 20px;
+    }
+    .modal-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .modal-content {
+        background: #fff;
+        border-radius: 20px;
+        padding: 30px 40px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 8px 25px rgba(101, 65, 255, 0.3);
+        text-align: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        position: relative;
+    }
+
+    .modal-content .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        background: transparent;
+        border: none;
+        font-size: 32px;
+        line-height: 1;
+        color: #5552a3;
+        cursor: pointer;
+        transition: color 0.25s ease;
+    }
+
+    .modal-content .modal-close:hover {
+        color: #6a11cb;
+    }
+
+    .detail-icon i {
+        font-size: 56px;
+        color: #6a11cb;
+        margin-bottom: 15px;
+        display: inline-block;
+    }
+
+    .detail-category {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .detail-value {
+        font-size: 22px;
+        font-weight: 600;
+        color: #5552a3;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('.population-table-full tbody tr');
+        const modal = document.querySelector('.modal-overlay');
+        const modalCloseBtn = modal.querySelector('.modal-close');
+        const detailIcon = modal.querySelector('.detail-icon i');
+        const detailCategory = modal.querySelector('.detail-category');
+        const detailValue = modal.querySelector('.detail-value');
+
+        const populationData = {
+            male: { value: "{{ total_males }}", iconClass: "fas fa-male", color: "#4a90e2" },
+            female: { value: "{{ total_females }}", iconClass: "fas fa-female", color: "#e96ba3" },
+            "senior-citizen": { value: "{{ total_senior_citizens }}", iconClass: "fas fa-user-shield", color: "#967adc" },
+            children: { value: "{{ total_children }}", iconClass: "fas fa-child", color: "#fbb257" },
+            youth: { value: "{{ total_youth }}", iconClass: "fas fa-users", color: "#5cc27b" },
+            pwd: { value: "{{ total_pwd }}", iconClass: "fas fa-wheelchair", color: "#cf8f87" }
+        };
+
+        function openModal(category) {
+            if (!populationData[category]) return;
+
+            const data = populationData[category];
+            detailIcon.className = data.iconClass;
+            detailIcon.style.color = data.color;
+            detailCategory.textContent = category.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            detailValue.textContent = "Value: " + data.value;
+
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+            modalCloseBtn.focus();
+            document.body.style.overflow = 'hidden'; // Prevent background scroll
+        }
+
+        function closeModal() {
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = ''; // Restore scroll
+        }
+
+        rows.forEach(row => {
+            row.addEventListener('click', () => {
+                const category = row.getAttribute('data-category');
+                openModal(category);
+            });
+            row.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    row.click();
+                }
+            });
+        });
+
+        modalCloseBtn.addEventListener('click', closeModal);
+
+        // Close modal on click outside content
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Close modal on Escape key press
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('show')) {
+                closeModal();
+            }
+        });
+    });
+</script>
+
+

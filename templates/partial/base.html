@@ -1,0 +1,136 @@
+<!--
+  for templates folder
+  templates/partial/base.html
+-->
+
+
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Event System{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'combinednavANDside.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    {% block extra_css %}
+    {% endblock %}
+</head>
+<body>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="side-menu">
+        <div class="brand-name">
+            <h1><i class="fas fa-store"></i> EVENT SYSTEM</h1>
+        </div>
+        {% if user.is_authenticated %}
+            <ul>
+                <li>
+                    <a href="{% url 'dashboard-dashboard' %}">
+                        <i class="fas fa-home"></i><span>Home</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'edit-profile' %}" target="_parent">
+                        <i class="fas fa-user"></i><span>Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'notifications' %}" class="notification-link">
+                        <i class="fas fa-bell"></i><span>Notifications</span>
+                        {% if unread_count > 0 %}
+                            <span class="badge">{{ unread_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                <li>
+                    <a href="/events/list">
+                        <i class="fas fa-calendar-alt"></i><span>Events</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'population' %}">
+                        <i class="fas fa-users"></i><span>Population</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'about' %}">
+                        <i class="fas fa-info-circle"></i><span>About</span>
+                    </a>
+                </li>
+            </ul>
+        {% endif %}
+        
+        <div class="logout-menu">
+            {% if user.is_authenticated %}
+                <a href="#" class="logout-btn" id="logoutTrigger">
+                    <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i><span>Login</span>
+                </a>
+                <a href="{% url 'signup' %}" class="signup-btn">
+                    <i class="fas fa-user-plus"></i><span>Sign Up</span>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="nav">
+                <div class="nav-left">
+                    <a href="{% url 'dashboard-dashboard' %}">Dashboard</a>
+                </div>
+                <div class="nav-right">
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="btn">Log in</a>
+                        <a href="{% url 'signup' %}" class="btn">Sign up</a>
+                    {% else %}
+                        <div class="user-info-display">
+                            <div class="user-name-display"><span>Welcome </span>{{ user.full_name|default:user.username }}</div>
+                            {% if user.get_role_display %}
+                                <div class="user-role-display">{{ user.get_role_display }}</div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content-logout">
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout from your account?</p>
+            <div class="modal-buttons-logout">
+                <button class="modal-btn modal-btn-cancel" id="cancelLogout">Cancel</button>
+                <form id="logoutForm" action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="modal-btn modal-btn-logout">Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'base.js' %}"></script>
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!--
+for accounts app
+admin/accounts/user/change_list.html
+-->
+
+
+{% extends "admin/change_list.html" %}
+
+   {% block object-tools-items %}
+          <li>
+            <a href="{{ view_officials_url }}" class="btn btn-info">View Only Barangay Officials</a>
+          </li>
+          <li>
+            <a href="{{ view_members_url }}" class="btn btn-info">View Only Members</a>
+          </li>
+          <li>
+            <a href="{{ view_all_url }}" class="btn btn-info">View All Users</a>
+          </li>
+     {{ block.super }}
+   {% endblock %}
+
+   {% block extrahead %}
+     {{ block.super }}
+     <style>
+       .btn {
+         display: inline-block;
+         padding: 6px 12px;
+         margin: 5px 0;
+         border-radius: 4px;
+         text-decoration: none;
+         font-weight: 500;
+         color: white;
+       }
+       .btn-info {
+         background-color: #067d68;
+         border: 1px solid #ffffff;
+       }
+       .btn-info:hover {
+         background-color: #055a4b;
+       }
+     </style>
+   {% endblock %}

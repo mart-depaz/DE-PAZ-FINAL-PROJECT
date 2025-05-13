@@ -1,0 +1,152 @@
+<!--
+for templates folder
+templates/partial/dashboardBoth.html
+-->
+
+
+
+
+
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'dashboardBoth.css' %}">
+    <title>Dashboard</title>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Total Population table (left side) -->
+        <div class="table-container population-table">
+            <div class="table-header-population">
+                <h2>Total Population</h2>
+                <a href="{% url 'population' %}" class="toggle-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody class="population-body">
+                    <tr class="population-row" data-category="male">
+                        <td><i class="fas fa-male"></i> Male</td>
+                        <td class="value-population">{{ total_males }}</td>
+                    </tr>
+                    <tr class="population-row" data-category="female">
+                        <td><i class="fas fa-female"></i> Female</td>
+                        <td class="value-population">{{ total_females }}</td>
+                    </tr>
+                    <tr class="population-row" data-category="senior">
+                        <td><i class="fas fa-user-shield"></i> Senior Citizen</td>
+                        <td class="value-population">{{ total_senior_citizens }}</td>
+                    </tr>
+                    <tr class="population-row" data-category="children">
+                        <td><i class="fas fa-child"></i> Children</td>
+                        <td class="value-population">{{ total_children }}</td>
+                    </tr>
+                    <tr class="population-row" data-category="youth">
+                        <td><i class="fas fa-users"></i> Youth</td>
+                        <td class="value-population">{{ total_youth }}</td>
+                    </tr>
+                    <tr class="population-row" data-category="pwd">
+                        <td><i class="fas fa-wheelchair"></i> PWD</td>
+                        <td class="value-population">{{ total_pwd }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="more-indicator"><span>.</span><span>.</span><span>.</span></div>
+        </div>
+        <!-- Events table (right side) -->
+        <div class="table-container events-table {% if request.user.role == 'OFFICIAL' %}events-table-official{% else %}events-table-member{% endif %}">
+            <div class="table-header-events">
+                <h2>Events</h2>
+                <a href="{% url 'event-list' %}" class="toggle-btn" id="events-toggle-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+            <div class="table-body-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>WHAT</th>
+                            <th>WHEN</th>
+                            <th>WHERE</th>
+                            <th>WHO</th>
+                        </tr>
+                    </thead>
+                    <tbody class="events-body">
+                        {% for event in events|slice:":3" %}
+                            <tr>
+                                <td>{{ event.what }}</td>
+                                <td>{{ event.when|date:"F d, Y - h:i A" }}</td>
+                                <td>{{ event.where }}</td>
+                                <td>{{ event.who }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="empty-message">No upcoming events.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="more-indicator-event" class="more-indicator"><span>.</span><span>.</span><span>.</span></div>
+            {% if events.count > 3 %}
+                <div class="see-more-events">See More Events</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+<script>
+    // Debug the events toggle button URL
+    document.getElementById('events-toggle-btn').addEventListener('click', (e) => {
+        const targetUrl = e.currentTarget.href;
+        console.log("Events toggle button clicked, URL:", targetUrl);
+        if (!targetUrl.includes('/events/list/')) {
+            console.warn("Unexpected URL, forcing redirect to /events/list/");
+            e.preventDefault();
+            window.location.href = '/events/list/';
+        }
+    });
+
+    // Auto-cycle through population categories randomly
+    const rows = document.querySelectorAll('.population-body .population-row');
+    const totalRows = rows.length;
+    let displayedRows = [];
+
+    function getRandomRows(count) {
+        const indices = Array.from({ length: totalRows }, (_, i) => i);
+        const shuffled = indices.sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, count);
+    }
+
+    function showRandomRows() {
+        rows.forEach(row => {
+            row.classList.remove('fade-in');
+            row.classList.add('fade-out');
+        });
+
+        setTimeout(() => {
+            rows.forEach(row => row.classList.add('hidden'));
+            const newIndices = getRandomRows(2);
+            displayedRows = newIndices.map(index => rows[index]);
+            displayedRows.forEach(row => {
+                row.classList.remove('hidden');
+                row.classList.remove('fade-out');
+                row.classList.add('fade-in');
+            });
+        }, 500);
+    }
+
+    showRandomRows();
+    setInterval(showRandomRows, 5000);
+</script>
+</html>

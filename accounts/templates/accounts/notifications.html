@@ -1,0 +1,499 @@
+<!--
+for accounts app
+templates/accounts/notifications.html
+-->
+
+{% extends 'partial/base.html' %}
+{% load static %}
+{% load tz %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  /* Messages (for potential Django messages) */
+  .messages {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3000;
+      width: 80%;
+      max-width: 600px;
+  }
+
+  .message {
+      padding: 15px 30px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      font-size: 16px;
+      text-align: center;
+      transition: opacity 0.5s ease;
+  }
+
+  .message.success {
+      background-color: #4e4e4e;
+      color: white;
+  }
+
+  /* Notification table styling */
+  .notification-table-container {
+      background: #f0f5ff;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0, 86, 179, 0.15);
+      margin: 20px;
+      padding: 25px 30px;
+      max-width: 920px;
+      margin-left: auto;
+      margin-right: auto;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #1a237e;
+  }
+
+  .table-header-notifications {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+  }
+
+  .table-header-notifications h2 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: #0d47a1;
+      font-weight: 900;
+      letter-spacing: 1.2px;
+  }
+
+  .table-header-notifications .action-buttons {
+      display: flex;
+      gap: 12px;
+  }
+
+  .toggle-btn, .clear-all-btn {
+      background: #1565c0;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 10px 18px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(21, 101, 192, 0.5);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+      user-select: none;
+  }
+
+  .clear-all-btn i {
+      margin-right: 8px;
+      font-size: 1.2rem;
+  }
+
+  .toggle-btn:hover, .clear-all-btn:hover {
+      background: #0d3f87;
+      box-shadow: 0 6px 16px rgba(13, 63, 135, 0.7);
+  }
+
+  .notification-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px; /* Increased row spacing for better separation */
+  }
+
+  .notification-table thead {
+      background: #bbdefb;
+      box-shadow: inset 0 -2px 8px rgba(255, 255, 255, 0.7);
+  }
+
+  .notification-table th, .notification-table td {
+      padding: 12px 14px; /* Adjusted padding for better spacing */
+      text-align: left;
+      font-size: 1rem; /* Slightly reduced for better multi-line readability */
+      color: #1a237e;
+      vertical-align: middle; /* Center text vertically */
+  }
+
+  .notification-table th {
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #3949ab;
+      letter-spacing: 0.08em;
+  }
+
+  .notification-table td .text {
+      display: block;
+      max-width: 600px; /* Limit message width for organized wrapping */
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      line-height: 1.6; /* Increased line height for readability */
+  }
+
+  .notification-table tbody tr {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 6px rgba(21, 101, 192, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .notification-table tbody tr:hover {
+      background: #e3f2fd;
+      box-shadow: 0 6px 18px rgba(21, 101, 192, 0.3);
+      transform: translateY(-2px);
+  }
+
+  .notification-table .empty-message {
+      text-align: center;
+      color: #666;
+      padding: 20px;
+      font-style: italic;
+  }
+
+  .notification-table .dismiss-btn {
+      background: transparent;
+      border: none;
+      color: #d32f2f;
+      cursor: pointer;
+      font-size: 1.3rem;
+      transition: color 0.3s ease;
+      font-weight: 700;
+      user-select: none;
+  }
+
+  .notification-table .dismiss-btn:hover {
+      color: #9a0007;
+  }
+
+  .notification-table .view-btn {
+      background: #1565c0;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      padding: 8px 16px;
+      border-radius: 6px;
+      margin-right: 8px;
+      box-shadow: 0 3px 9px rgba(21, 101, 192, 0.45);
+      user-select: none;
+  }
+
+  .notification-table .view-btn:hover {
+      background: #0d47a1;
+      box-shadow: 0 5px 15px rgba(13, 71, 161, 0.7);
+  }
+
+  /* Updated Modal styles for consistency */
+  #notification-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 700px;
+      max-width: 90vw;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      padding: 25px 30px;
+      background: #f0f5ff;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0, 86, 179, 0.25);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #1a237e;
+  }
+
+  #notification-modal.active {
+      display: block;
+  }
+
+  #notification-modal .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+  }
+
+  #notification-modal .modal-header h2 {
+      margin: 0;
+      font-size: 1.6rem;
+      color: #0d47a1;
+      font-weight: 900;
+      letter-spacing: 1.2px;
+  }
+
+  #modal-close-btn {
+      background: #d32f2f;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(211, 47, 47, 0.5);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      font-weight: 600;
+      user-select: none;
+  }
+
+  #modal-close-btn:hover {
+      background: #9a0007;
+      box-shadow: 0 6px 16px rgba(154, 0, 7, 0.7);
+  }
+
+  #notification-modal .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 6px rgba(21, 101, 192, 0.1);
+  }
+
+  #notification-modal .modal-content p {
+      font-size: 1.1rem;
+      color: #1a237e;
+      margin: none;
+      line-height: 1.6; /* Match table line height */
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+  }
+
+  #modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 900;
+  }
+
+  #modal-backdrop.active {
+      display: block;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+      .notification-table-container {
+          margin: 12px;
+          padding: 15px;
+      }
+
+      .notification-table th, .notification-table td {
+          padding: 10px 12px;
+          font-size: 0.95rem;
+      }
+
+      .table-header-notifications {
+          flex-direction: column;
+          align-items: flex-start;
+      }
+
+      .table-header-notifications .action-buttons {
+          margin-top: 12px;
+      }
+
+      #notification-modal {
+          margin: 12px;
+          padding: 15px;
+          width: 100%;
+          max-width: 90vw;
+      }
+
+      #notification-modal .modal-header h2 {
+          font-size: 1.4rem;
+      }
+
+      #modal-close-btn {
+          padding: 6px 12px;
+          font-size: 0.9rem;
+      }
+
+      #notification-modal .modal-content {
+          padding: 15px;
+      }
+
+      #notification-modal .modal-content p {
+          font-size: 1rem;
+      }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+{% timezone "Asia/Manila" %}
+<div class="notification-table-container" role="region" aria-label="Notification Table">
+    <div class="table-header-notifications">
+        <h2>Notifications</h2>
+        <div class="action-buttons">
+            {% if notifications %}
+                <button class="clear-all-btn" id="clear-all-btn" title="Clear All Notifications">
+                    <i class="fas fa-trash-alt"></i> Clear All
+                </button>
+            {% endif %}
+            <a href="{% url 'dashboard-dashboard' %}" class="toggle-btn" title="Go Back">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </div>
+    </div>
+    <table class="notification-table" aria-live="polite" aria-relevant="additions removals">
+        <thead>
+            <tr>
+                <th>MESSAGE</th>
+                <th>ACTIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for notification in notifications %}
+                <tr class="notification" data-id="{{ notification.id }}" data-event-id="{{ notification.event.id|default:'0' }}" role="alert">
+                    <td>
+                        <span class="text" tabindex="0" role="button" aria-label="View notification details">
+                            {{ notification.message }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="view-btn" aria-label="View notification details">View</button>
+                        <button class="dismiss-btn" aria-label="Dismiss notification">×</button>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2" class="empty-message">No notifications.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Notification Detail Modal -->
+<div id="notification-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc">
+    <div class="modal-header">
+        <h2 id="modal-title">Notification Details</h2>
+        <button id="modal-close-btn" aria-label="Close notification details">Close</button>
+    </div>
+    <div class="modal-content">
+        <p id="modal-desc"></p>
+    </div>
+</div>
+<div id="modal-backdrop"></div>
+{% endtimezone %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    (function() {
+        const notificationsContainer = document.querySelector('.notification-table tbody');
+        const modal = document.getElementById('notification-modal');
+        const modalDesc = document.getElementById('modal-desc');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const clearAllBtn = document.getElementById('clear-all-btn');
+
+        // Function to get CSRF token
+        function getCsrfToken() {
+            const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            return csrfInput ? csrfInput.value : '';
+        }
+
+        function openModal(text, notificationId, eventId) {
+            modalDesc.textContent = text;
+            modal.classList.add('active');
+            modalBackdrop.classList.add('active');
+            modalCloseBtn.focus();
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            modalBackdrop.classList.remove('active');
+            notificationsContainer.focus();
+        }
+
+        function updateTableState() {
+            if (!notificationsContainer.querySelector('.notification')) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = '<td colspan="2" class="empty-message">No notifications.</td>';
+                notificationsContainer.appendChild(emptyRow);
+                if (clearAllBtn) clearAllBtn.style.display = 'none';
+            }
+        }
+
+        // Initialize notifications with event handlers
+        function initializeNotifications() {
+            notificationsContainer.querySelectorAll('.notification').forEach(notification => {
+                const messageSpan = notification.querySelector('.text');
+                const dismissBtn = notification.querySelector('.dismiss-btn');
+                const viewBtn = notification.querySelector('.view-btn');
+                const text = messageSpan.textContent;
+                const notificationId = notification.dataset.id;
+                const eventId = notification.dataset.eventId;
+
+                messageSpan.addEventListener('click', () => {
+                    openModal(text, notificationId, eventId);
+                });
+                messageSpan.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openModal(text, notificationId, eventId);
+                    }
+                });
+
+                dismissBtn.addEventListener('click', () => {
+                    fetch(`/accounts/notifications/mark-read/${notificationId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCsrfToken(),
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            notificationsContainer.removeChild(notification);
+                            updateTableState();
+                        }
+                    });
+                });
+
+                viewBtn.addEventListener('click', () => {
+                    openModal(text, notificationId, eventId);
+                });
+            });
+        }
+
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', () => {
+                if (!confirm('Are you sure you want to clear all notifications?')) return;
+
+                fetch('/accounts/notifications/mark-all-read/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCsrfToken(),
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        notificationsContainer.innerHTML = '';
+                        updateTableState();
+                        window.location.href = '{% url "notifications" %}';
+                    }
+                });
+            });
+        }
+
+        modalCloseBtn.addEventListener('click', closeModal);
+        modalBackdrop.addEventListener('click', closeModal);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // Initialize event listeners on page load
+        initializeNotifications();
+    })();
+</script>
+{% endblock %}

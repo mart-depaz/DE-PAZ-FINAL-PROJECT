@@ -1,0 +1,109 @@
+<!--for accounts app
+    accounts/templates/accounts/signup.html
+-->
+    
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="{% static 'accounts/signup.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <form method="post" action="{% url 'signup' %}">
+        {% csrf_token %}
+        <div class="container">
+            <header><i class="fas fa-user-plus"></i> Sign Up</header>
+
+            <div class="form-section">
+                <div class="field">
+                    <label for="id_full_name"><i class="fas fa-user"></i> Full Name:</label>
+                    <input type="text" id="id_full_name" name="full_name" placeholder="Juan Dela Cruz" required class="form-input" value="{{ form.full_name.value|default_if_none:'' }}">
+                </div>
+                <div class="field">
+                    <label for="id_email"><i class="fas fa-envelope"></i> Email:</label>
+                    <input type="email" id="id_email" name="email" placeholder="juandelacruz@gmail.com" required class="form-input" value="{{ form.email.value|default_if_none:'' }}">
+                </div>
+                <div class="field">
+                    <label for="id_birthdate"><i class="fas fa-calendar-alt"></i> Birthdate:</label>
+                    <input type="date" id="id_birthdate" name="birthdate" required class="form-input" value="{{ form.birthdate.value }}">
+                </div>
+                <div class="field">
+                    <label for="id_age"><i class="fas fa-hashtag"></i> Age:</label>
+                    <input type="number" id="id_age" name="age" required class="form-input" value="{{ form.age.value }}">
+                </div>
+                <div class="field">
+                    <label for="id_gender"><i class="fas fa-venus-mars"></i> Gender:</label>
+                    <select id="id_gender" name="gender" required class="form-select">
+                        <option value="">Select Gender</option>
+                        {% for value, label in gender_choices %}
+                            <option value="{{ value }}" {% if form.gender.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="id_address"><i class="fas fa-map-marker-alt"></i> Address:</label>
+                    <input type="text" id="id_address" name="address" placeholder="Vasques st." required class="form-input" value="{{ form.address.value|default_if_none:'' }}">
+                </div>
+                <div class="field">
+                    <label for="id_contact_no"><i class="fas fa-phone"></i> Contact No:</label>
+                    <input type="tel" id="id_contact_no" name="contact_no" pattern="[0-9]{11}" placeholder="11-digit number" required class="form-input" value="{{ form.contact_no.value|default_if_none:'' }}">
+                </div>
+            </div>
+
+            <div class="form-section special-categories">
+                <h4>Special Categories:</h4>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="id_is_pwd" name="is_pwd" class="form-checkbox" {% if form.is_pwd.value %}checked{% endif %}>
+                        <i class="fas fa-wheelchair"></i> Person with Disability (PWD)
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="id_is_4ps_member" name="is_4ps_member" class="form-checkbox" {% if form.is_4ps_member.value %}checked{% endif %}>
+                        <i class="fas fa-users"></i> 4Ps Member
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="id_is_senior_citizen" name="is_senior_citizen" class="form-checkbox" {% if form.is_senior_citizen.value %}checked{% endif %}>
+                        <i class="fas fa-user-shield"></i> Senior Citizen
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-section role-section">
+                <h4>Role:</h4>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" id="id_role_0" name="role" value="OFFICIAL" class="form-radio" {% if form.role.value == 'OFFICIAL' %}checked{% endif %}>
+                        <i class="fas fa-user-tie"></i> Barangay Official
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" id="id_role_1" name="role" value="MEMBER" class="form-radio" {% if form.role.value == 'MEMBER' or not form.role.value %}checked{% endif %}>
+                        <i class="fas fa-user"></i> Member
+                    </label>
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <button type="submit"><i class="fas fa-check"></i> Submit</button>
+            </div>
+        </div>
+
+        {% if form.errors %}
+        <div class="form-errors">
+            {% for field, errors in form.errors.items %}
+                <div class="error-field">
+                    <strong>{{ field|capfirst }}:</strong>
+                    {% for error in errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </form>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!--
+    for accounts templates
+    accounts/template/accounts/edit_member.html
+-->
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Member</title>
+    <link rel="stylesheet" href="{% static 'member_style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Member Info: {{ user.full_name }}</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-grid">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn save">Save Changes</button>
+            <a href="{% url 'member-list' %}" class="btn back">Back</a>
+        </form>
+    </div>
+</body>
+</html>

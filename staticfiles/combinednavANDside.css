@@ -1,0 +1,471 @@
+/* 
+static folder
+combinednavANDside.css 
+*/
+
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+li {
+    list-style: none;
+}
+
+h1, h2 {
+    color: #444;
+}
+
+h3 {
+    color: #999;
+}
+
+/* Side Menu Styles */
+.side-menu {
+    position: fixed;
+    background: #5c00a5;
+    width: 250px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    top: 0;
+    left: 0;
+}
+
+.side-menu .brand-name {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #380b52;
+    padding: 0 20px;
+}
+
+.side-menu .brand-name h1 {
+    color: white;
+    font-size: 1.2rem;
+    white-space: nowrap;
+}
+
+.side-menu .brand-name i {
+    margin-right: 10px;
+    font-size: 1.5rem;
+}
+
+.side-menu ul {
+    margin-top: 20px;
+}
+
+.side-menu li {
+    padding: 15px 20px;
+    color: white;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+.side-menu li:hover, .side-menu li.active {
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 4px solid #a574fa;
+}
+
+.side-menu li a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    color: inherit;
+}
+
+.side-menu li i {
+    margin-right: 15px;
+    font-size: 1.1rem;
+    width: 24px;
+    text-align: center;
+}
+
+/* Notification Badge */
+.side-menu li a.notification-link {
+    position: relative;
+}
+
+.side-menu li a .badge {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background: #FF4444;
+    color: white;
+    border-radius: 50%;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    min-width: 20px;
+    text-align: center;
+    line-height: 1;
+}
+
+.logout-menu {
+    margin-top: auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.logout-btn, .login-btn {
+    background: #a574fa;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.logout-btn:hover, .login-btn:hover {
+    background: #6a3bd0;
+    transform: scale(1.05);
+}
+
+.logout-btn i, .login-btn i {
+    margin-right: 10px;
+}
+
+/* Container Styles */
+.container {
+    position: relative;
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+/* Header Styles */
+.header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: calc(100% - 250px);
+    height: 70px;
+    background: linear-gradient(90deg, #8c52ff, #00bf63);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+}
+
+.header .nav {
+    width: 95%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-left a {
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.nav-left a:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Button Styles */
+.btn {
+    background: #8c52ff;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn:hover {
+    background: #6a3bd0;
+    transform: translateY(-2px);
+}
+
+/* User Info Styles */
+.user-info-wrapper {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.user-info-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 0 10px;
+    text-align: center;
+    max-width: 300px;
+    margin-right: 2cm;
+}
+
+.user-name-display {
+    color: rgb(255, 255, 255);
+}
+
+.user-name-display span {
+    color: rgb(255, 255, 255);
+    font-size: 25px;
+}
+
+.user-name-display {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.user-role-display {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.2;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.user-name-display, .user-role-display {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+/* Content Styles */
+.content {
+    padding: 90px 20px 20px;
+    min-height: calc(100vh - 70px);
+    margin-left: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 992px) {
+    .side-menu {
+        width: 70px;
+        overflow: hidden;
+    }
+    
+    .side-menu .brand-name h1,
+    .side-menu li span {
+        display: none;
+    }
+    
+    .side-menu .brand-name {
+        justify-content: center;
+    }
+    
+    .side-menu li {
+        justify-content: center;
+        padding: 15px 0;
+    }
+    
+    .side-menu li i {
+        margin-right: 0;
+        font-size: 1.3rem;
+    }
+    
+    .container {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+    }
+    
+    .header {
+        width: calc(100% - 70px);
+    }
+    
+    .logout-btn span, .login-btn span {
+        display: none;
+    }
+    
+    .user-info {
+        max-width: 80px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .side-menu {
+        transform: translateX(-100%);
+        position: fixed;
+        width: 250px;
+        z-index: 1001;
+    }
+    
+    .side-menu.active {
+        transform: translateX(0);
+    }
+    
+    .side-menu .brand-name h1,
+    .side-menu li span {
+        display: block;
+    }
+    
+    .side-menu li {
+        justify-content: flex-start;
+        padding: 15px 20px;
+    }
+    
+    .side-menu li i {
+        margin-right: 15px;
+    }
+    
+    .container {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .header {
+        width: 100%;
+    }
+    
+    .logout-btn span, .login-btn span {
+        display: inline;
+    }
+    
+    .user-info {
+        max-width: 150px;
+    }
+}
+
+.signup-btn {
+    background: #00bf63;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.signup-btn:hover {
+    background: #009950;
+    transform: scale(1.05);
+}
+
+.signup-btn i {
+    margin-right: 10px;
+}
+
+
+
+
+
+
+
+
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content-logout {
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.modal-content-logout h3 {
+    margin-top: 0;
+    color: #000000;
+    font-size: 1.3rem;
+}
+
+.modal-content p {
+    margin-bottom: 25px;
+    color: #555;
+}
+
+.modal-buttons-logout {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.modal-btn-cancel {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.modal-btn-cancel:hover {
+    background-color: #e0e0e0;
+}
+
+.modal-btn-logout {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.modal-btn-logout:hover {
+    background-color: #c0392b;
+}
+
+/* Add profile content styles */
+.profile-content-container {
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 20px;
+}
