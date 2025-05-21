@@ -1,3 +1,9 @@
+// for static folder
+// base.js
+
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     // Get modal elements
     const logoutTrigger = document.getElementById('logoutTrigger');

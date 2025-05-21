@@ -32,9 +32,9 @@ except admin.sites.NotRegistered:
 
 # Register the custom User model with enhanced admin
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'full_name', 'role', 'is_admin', 'contact_no', 'created_at')
+    list_display = ('username', 'full_name', 'role', 'contact_no', 'created_at')
     search_fields = ('username', 'email', 'full_name')
-    list_filter = ('role', 'is_admin', 'is_pwd', 'is_4ps_member', 'is_senior_citizen', 'created_at')
+    list_filter = ('role', 'is_pwd', 'is_4ps_member', 'is_senior_citizen', 'created_at')
     ordering = ('-created_at',)
     list_per_page = 25
 

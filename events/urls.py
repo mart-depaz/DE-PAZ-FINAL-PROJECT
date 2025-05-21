@@ -1,12 +1,9 @@
-# for events app
-# urls.py
-
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 from . import views
+from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'events', views.EventViewSet, basename='event')
+router.register(r'api/events', views.EventViewSet, basename='event')
 
 urlpatterns = [
     path('', views.events, name='events'),
@@ -15,5 +12,4 @@ urlpatterns = [
     path('add/', views.add_event, name='add-event'),
     path('edit/<int:event_id>/', views.edit_event, name='edit-event'),
     path('delete/<int:event_id>/', views.delete_event, name='delete-event'),
-    path('api/', include(router.urls)),  # Move API routes under 'api/'
-]
+] + router.urls

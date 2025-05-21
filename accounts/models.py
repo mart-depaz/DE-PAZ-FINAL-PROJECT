@@ -1,15 +1,10 @@
-# for accounts app
-# accounts/models.py
-
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 
-
 class User(AbstractUser):
     ROLE_CHOICES = [
-        ('ADMIN', 'Admin'),
         ('OFFICIAL', 'Barangay Official'),
         ('MEMBER', 'Member'),
     ]
@@ -19,11 +14,10 @@ class User(AbstractUser):
         ('F', 'Female'),
         ('O', 'Other'),
     ]
-    
-    is_admin = models.BooleanField(default=False)
+
     full_name = models.CharField(_('full name'), max_length=100)
-    birthdate = models.DateField(null=True, blank=True)  # Make optional
-    age = models.PositiveIntegerField(null=True, blank=True)
+    birthdate = models.DateField(null=False, blank=False)
+    age = models.PositiveIntegerField(null=True, blank=True, default=0)
     gender = models.CharField(_('gender'), max_length=1, choices=GENDER_CHOICES)
     address = models.TextField(_('address'))
     contact_no = models.CharField(_('contact number'), max_length=11)
@@ -48,4 +42,4 @@ class Notification(models.Model):
     event = models.ForeignKey('events.Event', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.message[:20]}"
+        return f"{self.user.username} - {self.message[:20]}" 

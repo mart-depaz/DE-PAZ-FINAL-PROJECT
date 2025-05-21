@@ -2,7 +2,6 @@
 # dashboard/views.py
 
 from django.shortcuts import render, redirect
-from accounts.decorators import official_required
 from django.contrib.auth.decorators import login_required
 from accounts.models import User, Notification
 from events.models import Event
@@ -77,11 +76,7 @@ def profile(request):
 
 @login_required
 def notifications(request):
-    notifications = Notification.objects.filter(user=request.user).order_by('-timestamp')
-    context = {
-        'notifications': notifications,
-    }
-    return render(request, 'accounts/notifications.html', context)
+    return render(request, 'accounts/notifications.html')
 
 @login_required
 def population(request):

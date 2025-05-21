@@ -1,8 +1,3 @@
-<!--
-for events app
-templates/events/event_list.html
--->
-
 {% extends 'partial/base.html' %}
 {% load static %}
 
@@ -16,7 +11,7 @@ templates/events/event_list.html
         line-height: 1.4;
     }
 
-    /* Event Detail Modal Styling */
+    /* Event Detail Modal Styling (unchanged) */
     .event-detail-modal {
         display: none;
         position: fixed;
@@ -115,6 +110,28 @@ templates/events/event_list.html
         color: #1abc9c;
     }
 
+    .event-detail-modal .modal-content .event-details-text p.status-field {
+        font-weight: 600;
+        color: #1abc9c;
+        margin: 14px 0;
+    }
+
+    .event-detail-modal .modal-content .event-details-text p.status-field strong {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-right: 10px;
+    }
+
+    .event-detail-modal .modal-content .event-details-text p span#modal-status {
+        min-height: 20px;
+        display: inline-block;
+        visibility: visible !important;
+        opacity: 1 !important;
+        color: #6b6b6b;
+        min-width: 100px;
+        font-size: 20px;
+    }
+
     #modal-backdrop {
         display: none;
         position: fixed;
@@ -130,7 +147,7 @@ templates/events/event_list.html
         display: block;
     }
 
-    /* Responsive styling for modal */
+    /* Responsive styling for modal (unchanged) */
     @media (max-width: 600px) {
         .event-detail-modal {
             margin: 20px 15px;
@@ -158,6 +175,68 @@ templates/events/event_list.html
             margin: 12px 0;
         }
     }
+
+    /* Adjustments for table layout (refined to fit container) */
+    .events-table-full table {
+        width: 100%; /* Fit to container width */
+        table-layout: fixed;
+        margin-left: 0; /* Remove previous offset since we're not expanding */
+    }
+
+    .events-table-full th, .events-table-full td {
+        font-size: 0.85rem; /* Consistent with previous reduction for compactness */
+        padding: 6px 3px; /* Reduced padding for tighter spacing between columns */
+        text-align: center; /* Center-align for consistency */
+        word-wrap: break-word; /* Ensure long text wraps within cells */
+    }
+
+    .events-table-full th:last-child, .events-table-full td:last-child {
+        width: 80px; /* Adjusted width for ACTIONS to fit buttons */
+        padding: 6px 6px; /* Slightly more padding for action buttons */
+    }
+
+    .events-table-full .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 3px; /* Minimal gap between action buttons */
+    }
+
+    .events-table-full .action-btn {
+        padding: 3px; /* Reduced button padding */
+        font-size: 0.8rem; /* Consistent with previous button icon size */
+    }
+
+    .events-table-full th i, .events-table-full td i {
+        margin-right: 4px; /* Reduced gap between icon and text in headers */
+    }
+
+
+    /* Status background color coding for text */
+    .status-done {
+        background-color: #28a745; /* Green background for Done text */
+        color: #fff; /* White text for contrast */
+        padding: 2px 6px; /* Small padding to create a visible background box */
+        border-radius: 4px; /* Rounded corners for a highlight effect */
+        display: inline; /* Ensure padding and border-radius work */
+    }
+
+    .status-postponed {
+        background-color: #dc3545; /* Red background for Postponed text */
+        color: #fff; /* White text for contrast */
+        padding: 2px 6px; /* Small padding to create a visible background box */
+        border-radius: 4px; /* Rounded corners for a highlight effect */
+        display: inline; /* Ensure padding and border-radius work */
+    }
+
+    .status-ongoing {
+        background-color: #007bff; /* Blue background for Ongoing text */
+        color: #fff; /* White text for contrast */
+        padding: 2px 6px; /* Small padding to create a visible background box */
+        border-radius: 4px; /* Rounded corners for a highlight effect */
+        display: inline; /* Ensure padding and border-radius work */
+    }
+
+
 </style>
 {% endblock %}
 
@@ -190,6 +269,7 @@ templates/events/event_list.html
                 <th><i class="far fa-clock"></i> WHEN</th>
                 <th><i class="fas fa-map-marker-alt"></i> WHERE</th>
                 <th><i class="fas fa-users"></i> WHO</th>
+                <th><i class="fas fa-check-circle"></i> STATUS</th>
                 {% if is_official %}
                     <th><i class="fas fa-cog"></i> ACTIONS</th>
                 {% endif %}
@@ -197,11 +277,22 @@ templates/events/event_list.html
         </thead>
         <tbody>
             {% for event in events %}
-                <tr class="event-row" data-event-id="{{ event.id }}" data-created-by="{{ event.created_by.full_name|default:'Unknown' }}" role="button" aria-label="View event details">
+                <tr class="event-row" 
+                    data-event-id="{{ event.id }}" 
+                    data-created-by="{{ event.created_by.full_name|default:'Unknown' }}"
+                    data-what="{{ event.what }}"
+                    data-when="{{ event.when|date:'F d, Y - h:i A' }}"
+                    data-where="{{ event.where }}"
+                    data-who="{{ event.who }}"
+                    data-status="{{ event.status }}"
+                    data-status-display="{{ event.get_status_display }}"
+                    role="button" 
+                    aria-label="View event details">
                     <td>{{ event.what }}</td>
                     <td>{{ event.when|date:"F d, Y - h:i A" }}</td>
                     <td>{{ event.where }}</td>
                     <td>{{ event.who }}</td>
+                    <td class="status-column"><span class="status-{{ event.status }}">{{ event.get_status_display }}</span></td>
                     {% if is_official %}
                         <td class="action-cell">
                             <div class="action-buttons">
@@ -213,7 +304,7 @@ templates/events/event_list.html
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="{% if is_official %}5{% else %}4{% endif %}" class="empty-message">
+                    <td colspan="{% if is_official %}6{% else %}5{% endif %}" class="empty-message">
                         <i class="fas fa-calendar-times"></i> No events yet. {% if is_official %}Click "Plus button" to create your first event!{% endif %}
                     </td>
                 </tr>
@@ -234,6 +325,7 @@ templates/events/event_list.html
             <p><strong>When:</strong> <span id="modal-when"></span></p>
             <p><strong>Where:</strong> <span id="modal-where"></span></p>
             <p><strong>Who:</strong> <span id="modal-who"></span></p>
+            <p class="status-field"><strong>Status:</strong> <span id="modal-status"></span></p>
             <p><strong>Created By:</strong> <span id="modal-created-by"></span></p>
         </div>
     </div>
@@ -264,6 +356,14 @@ templates/events/event_list.html
                 <div class="form-row">
                     <label class="form-label">Who:</label>
                     <textarea id="whoInput" name="who" class="form-input form-textarea" placeholder="Participants" required></textarea>
+                </div>
+                <div class="form-row">
+                    <label class="form-label">Status:</label>
+                    <select id="statusInput" name="status" class="form-input" required>
+                        <option value="ongoing">Ongoing</option>
+                        <option value="done">Done</option>
+                        <option value="postponed">Postponed</option>
+                    </select>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Save Event</button>
@@ -299,6 +399,16 @@ templates/events/event_list.html
                     <label class="form-label">Who:</label>
                     <textarea id="editWhoInput" name="who" class="form-input form-textarea" required></textarea>
                 </div>
+                {% if is_official %}
+                <div class="form-row">
+                    <label class="form-label">Status:</label>
+                    <select id="editStatusInput" name="status" class="form-input" required>
+                        <option value="ongoing">Ongoing</option>
+                        <option value="done">Done</option>
+                        <option value="postponed">Postponed</option>
+                    </select>
+                </div>
+                {% endif %}
                 <div class="form-actions">
                     <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Update Event</button>
                     <button type="button" class="exit-btn"><i class="fas fa-times"></i> Cancel</button>

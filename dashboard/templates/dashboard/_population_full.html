@@ -242,6 +242,11 @@ templates/partial/_population_full.html
         font-weight: 600;
         color: #5552a3;
     }
+
+    .actions-cell {
+        min-width: 220px;
+        /* ...other styles... */
+    }
 </style>
 
 <script>
@@ -308,6 +313,14 @@ templates/partial/_population_full.html
             if (e.key === 'Escape' && modal.classList.contains('show')) {
                 closeModal();
             }
+        });
+
+        document.querySelectorAll('.postpone-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent row click
+                const eventId = button.closest('tr').dataset.eventId;
+                postponeEvent(eventId);
+            });
         });
     });
 </script>

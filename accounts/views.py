@@ -11,14 +11,12 @@ from .models import User, Notification
 from .forms import CreatePasswordForm, SignUpForm, EditProfileForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from .decorators import official_required
 from django.contrib.auth import authenticate
 from django.http import HttpResponseForbidden
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from accounts.models import User
 from django.db import IntegrityError
-from django.core.files.base import ContentFile
 from django.utils import timezone
 from django.http import JsonResponse
 from rest_framework import viewsets
@@ -146,7 +144,7 @@ def password_reset(request, user_id):
                 request.session['user_role'] = user.get_role_display()
                 logger.info(f"User {user.username} reset their password and logged in")
                 if user.role == 'ADMIN':
-                    return redirect('dashboard-admin')
+                    pass
                 elif user.role == 'OFFICIAL':
                     return redirect('dashboard-official')
                 else:
@@ -163,7 +161,6 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        remember_me = request.POST.get('remember')
         user = authenticate(request, username=username, password=password)
         logger.debug(f"Username authentication attempt: {username}, Result: {user}")
 
@@ -177,11 +174,6 @@ def login_view(request):
 
         if user is not None:
             auth_login(request, user)
-            if not remember_me:
-                request.session.set_expiry(0)
-            else:
-                request.session.set_expiry(1209600)
-
             request.session['welcome_message'] = f"Welcome, {user.full_name}"
             request.session['user_role'] = user.get_role_display()
             logger.info(f"User {user.username} logged in successfully")
@@ -212,8 +204,7 @@ def forgot_password(request):
             return redirect('password-reset')
     return render(request, 'accounts/forgot_password.html')
 
-@login_required
-@official_required
+
 def edit_member(request, user_id):
     user = get_object_or_404(User, id=user_id, role='MEMBER')
     if request.method == 'POST':
@@ -231,8 +222,7 @@ def edit_member(request, user_id):
         'user': user
     })
 
-@login_required
-@official_required
+
 def delete_member(request, user_id):
     user = get_object_or_404(User, id=user_id, role='MEMBER')
     if request.method == 'POST':
@@ -242,8 +232,7 @@ def delete_member(request, user_id):
         return redirect('member-list')
     return render(request, 'accounts/confirm_delete.html', {'user': user})
 
-@login_required
-@official_required
+
 def member_list(request):
     members = User.objects.filter(role='MEMBER')
     return render(request, 'accounts/member_list.html', {'members': members})

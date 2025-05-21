@@ -1,10 +1,3 @@
-// for events app
-// events/static/events/event_list.js
-
-
-
-
-// events/static/events/event_list.js
 console.log("Event List JavaScript loaded successfully");
 
 let editRowIndex = -1;
@@ -56,12 +49,72 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBackdrop = document.getElementById('modal-backdrop');
     const modalCloseBtn = eventModal.querySelector('.close-btn');
 
-    function openEventModal(eventData) {
-        document.getElementById('modal-what').textContent = eventData.what;
-        document.getElementById('modal-when').textContent = eventData.when;
-        document.getElementById('modal-where').textContent = eventData.where;
-        document.getElementById('modal-who').textContent = eventData.who;
-        document.getElementById('modal-created-by').textContent = eventData.createdBy;
+    function openEventModal(eventData, eventId) {
+        console.log("Opening event modal for event ID:", eventId);
+        console.log("Event data received:", eventData);
+
+        // Get all modal elements
+        const modalElements = {
+            what: document.getElementById('modal-what'),
+            when: document.getElementById('modal-when'),
+            where: document.getElementById('modal-where'),
+            who: document.getElementById('modal-who'),
+            status: document.getElementById('modal-status'),
+            createdBy: document.getElementById('modal-created-by')
+        };
+
+        // Debug log for modal elements
+        console.log("Modal elements found:", {
+            what: !!modalElements.what,
+            when: !!modalElements.when,
+            where: !!modalElements.where,
+            who: !!modalElements.who,
+            status: !!modalElements.status,
+            createdBy: !!modalElements.createdBy
+        });
+
+        // Set values with logging
+        if (modalElements.what) {
+            modalElements.what.textContent = eventData.what || 'N/A';
+            console.log("Setting what:", eventData.what);
+        }
+        if (modalElements.when) {
+            modalElements.when.textContent = eventData.when || 'N/A';
+            console.log("Setting when:", eventData.when);
+        }
+        if (modalElements.where) {
+            modalElements.where.textContent = eventData.where || 'N/A';
+            console.log("Setting where:", eventData.where);
+        }
+        if (modalElements.who) {
+            modalElements.who.textContent = eventData.who || 'N/A';
+            console.log("Setting who:", eventData.who);
+        }
+        if (modalElements.status) {
+            const statusValue = eventData.statusDisplay || eventData.status || 'Ongoing';
+            console.log("Attempting to set status to:", statusValue);
+            modalElements.status.textContent = statusValue;
+            modalElements.status.className = `status-${eventData.status}`; // Apply status class for background
+            modalElements.status.style.display = 'inline-block';
+            modalElements.status.style.visibility = 'visible';
+            modalElements.status.style.opacity = '1';
+            console.log("Status element after setting:", {
+                textContent: modalElements.status.textContent,
+                className: modalElements.status.className,
+                display: modalElements.status.style.display,
+                visibility: modalElements.status.style.visibility,
+                opacity: modalElements.status.style.opacity
+            });
+        } else {
+            console.error("Status element not found in modal");
+        }
+        if (modalElements.createdBy) {
+            const creatorName = eventData.createdBy || 'Unknown';
+            modalElements.createdBy.textContent = creatorName;
+            console.log("Setting createdBy:", creatorName, " (from eventData.createdBy:", eventData.createdBy, ")");
+        }
+
+        // Show modal
         eventModal.classList.add('active');
         modalBackdrop.classList.add('active');
         modalCloseBtn.focus();
@@ -95,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Add event listener for form submission
-        // Add event listener for form submission
     const addForm = document.getElementById('addEventForm');
     if (addForm) {
         addForm.addEventListener('submit', (e) => {
@@ -107,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("When (original):", whenValue);
             console.log("Where:", document.getElementById('whereInput').value);
             console.log("Who:", document.getElementById('whoInput').value);
+            console.log("Status:", document.getElementById('statusInput').value);
 
             // Normalize the time format
             whenValue = whenValue.replace(/\s(A|P)$/, ' $1M');
@@ -164,7 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Submitting edit form to:", editForm.action);
             let whenValue = document.getElementById('editWhenInput').value;
             console.log("Edit Event Form submitted");
+            console.log("What:", document.getElementById('editWhatInput').value);
             console.log("When (original):", whenValue);
+            console.log("Where:", document.getElementById('editWhereInput').value);
+            console.log("Who:", document.getElementById('editWhoInput').value);
+            console.log("Status:", document.getElementById('editStatusInput').value);
 
             // Normalize the time format
             whenValue = whenValue.replace(/\s(A|P)$/, ' $1M');
@@ -198,6 +255,35 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 console.log('Edit Event Success:', data);
                 fadeOutMessages(); // Trigger fade-out
+                // Update table row status
+                const row = document.querySelector(`tr[data-event-id="${currentEventId}"]`);
+                if (row) {
+                    const statusCell = row.querySelector('.status-column');
+                    const newStatus = document.getElementById('editStatusInput').value;
+                    const statusMap = {
+                        'ongoing': 'Ongoing',
+                        'done': 'Done',
+                        'postponed': 'Postponed'
+                    };
+                    const statusDisplay = statusMap[newStatus] || 'Ongoing';
+                    statusCell.textContent = statusDisplay;
+                    row.setAttribute('data-status', newStatus);
+                    row.setAttribute('data-status-display', statusDisplay);
+                    console.log(`Updated table row status for event ID ${currentEventId} to ${statusDisplay}`);
+                }
+                // Update modal if open
+                if (eventModal.classList.contains('active') && row && row.getAttribute('data-event-id') === currentEventId) {
+                    const modalStatus = document.getElementById('modal-status');
+                    if (modalStatus) {
+                        const statusDisplay = document.getElementById('editStatusInput').value;
+                        modalStatus.textContent = statusMap[statusDisplay] || 'Ongoing';
+                        modalStatus.className = `status-${statusDisplay}`; // Apply status class for background
+                        modalStatus.style.display = 'inline-block';
+                        modalStatus.style.visibility = 'visible';
+                        modalStatus.style.opacity = '1';
+                        console.log(`Modal status updated to ${modalStatus.textContent} for event ID ${currentEventId}`);
+                    }
+                }
                 // Delay redirect to allow fade-out to complete
                 setTimeout(() => {
                     window.location.href = '/events/list/';
@@ -248,26 +334,31 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-    // Add event listeners for "Edit" and "Delete" buttons, row clicks, and drag-over
+
+    // Add event listeners for "Edit", "Delete", and row clicks
     const eventRows = document.querySelectorAll('.event-row');
     eventRows.forEach(row => {
         const eventId = row.getAttribute('data-event-id');
         const editButton = row.querySelector('.action-btn.edit');
         const deleteButton = row.querySelector('.action-btn.delete');
 
-        // Click event
+        // Click event for row (to open event details modal)
         row.addEventListener('click', (e) => {
-            if (e.target.closest('.action-buttons')) return; // Prevent row click if clicking action buttons
-
-            const cells = row.cells;
+            if (e.target.closest('.action-buttons')) return;
+            
+            // Get all data attributes from the row
             const eventData = {
-                what: cells[0].textContent.trim(),
-                when: cells[1].textContent.trim(),
-                where: cells[2].textContent.trim(),
-                who: cells[3].textContent.trim(),
+                what: row.getAttribute('data-what'),
+                when: row.getAttribute('data-when'),
+                where: row.getAttribute('data-where'),
+                who: row.getAttribute('data-who'),
+                status: row.getAttribute('data-status'),
+                statusDisplay: row.getAttribute('data-status-display') || 'Ongoing',
                 createdBy: row.getAttribute('data-created-by')
             };
-            openEventModal(eventData);
+            
+            console.log("Event data from attributes:", eventData);
+            openEventModal(eventData, eventId);
         });
 
         // Drag-over events
@@ -333,8 +424,9 @@ function openAddModal() {
     const whatInput = document.getElementById('whatInput');
     const whereInput = document.getElementById('whereInput');
     const whoInput = document.getElementById('whoInput');
+    const statusInput = document.getElementById('statusInput');
 
-    if (addModal && whatInput && whereInput && whoInput) {
+    if (addModal && whatInput && whereInput && whoInput && statusInput) {
         addModal.style.display = 'flex';
         whatInput.value = '';
         if (whenInput) {
@@ -342,6 +434,7 @@ function openAddModal() {
         }
         whereInput.value = '';
         whoInput.value = '';
+        statusInput.value = 'ongoing';
         toggleScrollButton(addModal);
     } else {
         console.error("Add Modal or input elements not found");
@@ -372,10 +465,11 @@ function openEditModal(button, eventId) {
     const editWhenInputElement = document.getElementById('editWhenInput');
     const editWhereInput = document.getElementById('editWhereInput');
     const editWhoInput = document.getElementById('editWhoInput');
+    const editStatusInput = document.getElementById('editStatusInput');
     const editModal = document.getElementById('editModal');
     const form = document.getElementById('editEventForm');
 
-    if (editWhatInput && editWhenInputElement && editWhereInput && editWhoInput && editModal && form) {
+    if (editWhatInput && editWhenInputElement && editWhereInput && editWhoInput && editStatusInput && editModal && form) {
         editWhatInput.value = cells[0].textContent.trim();
         let dateStr = cells[1].textContent.trim();
         console.log("Edit Modal - Original dateStr:", dateStr);
@@ -401,7 +495,14 @@ function openEditModal(button, eventId) {
         }
         editWhereInput.value = cells[2].textContent.trim();
         editWhoInput.value = cells[3].textContent.trim();
-
+        const statusDisplay = row.getAttribute('data-status-display') || 'Ongoing';
+        const statusMap = {
+            'Ongoing': 'ongoing',
+            'Done': 'done',
+            'Postponed': 'postponed'
+        };
+        editStatusInput.value = statusMap[statusDisplay] || 'ongoing';
+        console.log("Edit Modal - Set status:", editStatusInput.value, "(from status_display:", statusDisplay, ")");
         form.action = `/events/edit/${eventId}/`;
         editModal.style.display = 'flex';
         toggleScrollButton(editModal);
@@ -470,10 +571,6 @@ function toggleScrollButton(modal) {
         scrollBtn.style.display = 'none';
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    fadeOutMessages();
-});
 
 // Fade out and remove messages
 function fadeOutMessages() {
